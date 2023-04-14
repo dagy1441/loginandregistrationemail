@@ -5,7 +5,6 @@ import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ public class ObjectsValidator<T> {
                     .stream()
                     .map(ConstraintViolation::getMessage)
                     .collect(Collectors.toSet());
-            throw new  ObjectNotValidException(errorMessages);
+            throw new ObjectNotValidException(errorMessages);
         }
     }
 

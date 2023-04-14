@@ -1,4 +1,12 @@
 package com.dagy.loginandregistrationemail.categories;
 
-public record CategoryResponse() {
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+public record CategoryResponse(
+        Long id,
+        String name,
+        String description
+) {
 }

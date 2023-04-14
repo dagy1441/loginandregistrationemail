@@ -17,7 +17,8 @@ public class ApiDataResponse {
     protected HttpStatus httpStatus;
     protected String reason;
     protected String message;
-    protected String developperMessage;
+    protected String developerMessage;
     protected Map<?,?> data;
+    protected Map<?,?> error;
 
 }
