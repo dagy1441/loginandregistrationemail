@@ -1,5 +1,7 @@
 package com.dagy.loginandregistrationemail.security.jwt;
 
+import com.dagy.loginandregistrationemail.user.User;
+import com.dagy.loginandregistrationemail.user.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,12 +13,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class JwtService {
+
+    private final UserService userService;
 
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
@@ -34,32 +47,33 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(User userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
     public String generateToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails
+            User userDetails
     ) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
     public String generateRefreshToken(
-            UserDetails userDetails
+            User userDetails
     ) {
         return buildToken(new HashMap<>(), userDetails, refreshExpiration);
     }
 
     private String buildToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails,
+            User userDetails,
             long expiration
     ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
+                .claim("roles", userDetails.getRole())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -91,5 +105,34 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    @Transactional()
+    public User getCurrentUser() {
+
+        System.out.println();
+
+        User authentication = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        log.info("Service------------------------- "+authentication.getUsername());
+        System.out.println("Service------------------------- "+authentication.getUsername());
+        String currentUserName = authentication.getUsername();
+
+        User userExist = (User) userService.loadUserByUsername(currentUserName);
+        if (userExist == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return userExist;
+    }
+
+    public String getUserName() {
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("user name"+authentication.getName());
+
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            System.out.println("user name"+authentication.getName());
+            return authentication.getName();
+        }else throw new UsernameNotFoundException("User not found");
+
     }
 }

@@ -1,6 +1,7 @@
 package com.dagy.loginandregistrationemail.handlers;
 
 import com.dagy.loginandregistrationemail.exceptions.EntityAllReadyExistException;
+import com.dagy.loginandregistrationemail.exceptions.IncorrectPasswordException;
 import com.dagy.loginandregistrationemail.exceptions.ObjectNotValidException;
 import com.dagy.loginandregistrationemail.utilities.helpers.ApiDataResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -58,6 +59,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityAllReadyExistException.class)
     public ResponseEntity<?> handleException(EntityAllReadyExistException exception){
+
+        return  ResponseEntity
+                .badRequest()
+                .body(ApiDataResponse.builder()
+                        .time(now())
+                        .message(exception.getMessage())
+                        .httpStatus(HttpStatus.CONFLICT)
+                        .statusCode(HttpStatus.CONFLICT.value())
+                        .build());
+
+    }
+
+    @ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<?> handleException(IncorrectPasswordException exception){
 
         return  ResponseEntity
                 .badRequest()

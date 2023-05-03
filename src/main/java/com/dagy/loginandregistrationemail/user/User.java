@@ -2,25 +2,24 @@ package com.dagy.loginandregistrationemail.user;
 
 import com.dagy.loginandregistrationemail.token.Token;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "app_user")
 public class User  implements UserDetails {
 
@@ -34,13 +33,21 @@ public class User  implements UserDetails {
 
     private Boolean locked = true;
     private Boolean enabled = false;
-    private Instant created = Instant.now();
+
+    @Column(unique = true, nullable = true)
+    public LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
+
+    public User(String firstName, String lastName, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

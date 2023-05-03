@@ -30,16 +30,42 @@ public class CategoryController implements CategoryApi {
 
     @Override
     public ResponseEntity<ApiDataResponse> findById(Long idCategory) {
-        return null;
+        return ResponseEntity.ok(
+                ApiDataResponse.builder()
+                        .time(now())
+                        .message("Liste des catégories")
+                        .httpStatus(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .data(Map.of("categories", categoryService.findById(idCategory)))
+                        .build()
+        );
     }
 
     @Override
     public ResponseEntity<ApiDataResponse> findAll() {
-        return null;
+        return ResponseEntity.ok(
+                ApiDataResponse.builder()
+                        .time(now())
+                        .message("Liste des catégories")
+                        .httpStatus(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .data(Map.of("categories", categoryService.findAll()))
+                        .build()
+        );
     }
 
     @Override
-    public void delete(Long id) {
-
+    public ResponseEntity<ApiDataResponse> delete(Long idCategory) {
+        categoryService.delete(idCategory);
+        return ResponseEntity.ok(
+                ApiDataResponse.builder()
+                        .time(now())
+                        .message("Catégorie supprimée")
+                        .httpStatus(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
+        );
     }
+
+
 }

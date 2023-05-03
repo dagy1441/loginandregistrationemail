@@ -2,6 +2,7 @@ package com.dagy.loginandregistrationemail.categories;
 
 import com.dagy.loginandregistrationemail.exceptions.EntityAllReadyExistException;
 import com.dagy.loginandregistrationemail.validators.ObjectsValidator;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,8 +37,24 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse findById(Long id) {
+    public CategoryResponse update(Long id, CategoryRequest request) {
         return null;
+    }
+
+    @Override
+    public CategoryResponse findById(Long id) {
+
+        if (id == null) {
+            log.error("Category ID est null");
+            return null;
+        }
+        Optional<Category> category = categoryRepository.findById(id);
+        return Optional.of(
+                        CategoryMapper.fromEntity(category.get()))
+                .orElseThrow(
+                        () -> new EntityNotFoundException(
+                                "Aucune categorie avec l'ID " + id + " n'a été trouvée")
+                );
     }
 
     @Override
@@ -46,11 +64,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryResponse> findAll() {
-        return null;
+        return categoryRepository.findAll()
+                .stream()
+                .map(CategoryMapper::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void delete(Long id) {
-
+        if (id == null){
+            log.error("Article ID est null");
+            return ;
+        }
+        categoryRepository.deleteById(id);
     }
 }
