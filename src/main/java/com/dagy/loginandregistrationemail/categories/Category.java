@@ -2,7 +2,6 @@ package com.dagy.loginandregistrationemail.categories;
 
 import com.dagy.loginandregistrationemail.utilities.models.AbstractEntity;
 import jakarta.persistence.Entity;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
 import lombok.*;
 

@@ -1,7 +1,10 @@
 package com.dagy.loginandregistrationemail.validators;
 
 import com.dagy.loginandregistrationemail.exceptions.ObjectNotValidException;
-import jakarta.validation.*;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +20,7 @@ public class ObjectsValidator<T> {
 
     public void validate(T objectToValidate) {
         Set<ConstraintViolation<T>> violations = validator.validate(objectToValidate);
-        if (!violations.isEmpty()){
+        if (!violations.isEmpty()) {
             var errorMessages = violations
                     .stream()
                     .map(ConstraintViolation::getMessage)

@@ -7,12 +7,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +17,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -114,8 +114,8 @@ public class JwtService {
 
         User authentication = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        log.info("Service------------------------- "+authentication.getUsername());
-        System.out.println("Service------------------------- "+authentication.getUsername());
+        log.info("Service------------------------- " + authentication.getUsername());
+        System.out.println("Service------------------------- " + authentication.getUsername());
         String currentUserName = authentication.getUsername();
 
         User userExist = (User) userService.loadUserByUsername(currentUserName);
@@ -126,13 +126,13 @@ public class JwtService {
     }
 
     public String getUserName() {
-        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("user name"+authentication.getName());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("user name" + authentication.getName());
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            System.out.println("user name"+authentication.getName());
+            System.out.println("user name" + authentication.getName());
             return authentication.getName();
-        }else throw new UsernameNotFoundException("User not found");
+        } else throw new UsernameNotFoundException("User not found");
 
     }
 }

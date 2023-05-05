@@ -9,23 +9,23 @@ import java.io.IOException;
 
 public interface AuthenticationService {
 
-  public AuthenticationResponse register(RegisterRequest request) ;
+    public AuthenticationResponse register(RegisterRequest request);
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request);
+    public AuthenticationResponse authenticate(AuthenticationRequest request);
 
-  public String confirmToken(String token);
+    public String confirmToken(String token);
 
-  public void refreshToken(HttpServletRequest request,HttpServletResponse response) throws IOException;
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
-  public void changePassword(ChangePasswordRequest request);
+    public void changePassword(ChangePasswordRequest request);
 
-  public void forgotPassword(ForgotPasswordRequest request);
+    public void forgotPassword(ForgotPasswordRequest request);
 
-  public void createPasswordResetToken(User user);
+    public void createPasswordResetToken(User user);
 
-  public ResetPasswordResponse validatePasswordResetToken(String token);
+    public ResetPasswordResponse validatePasswordResetToken(String token);
 
-  public void resetPassword(User user, String newPassword);
+    public void resetPassword(User user, String newPassword);
 
 
 }

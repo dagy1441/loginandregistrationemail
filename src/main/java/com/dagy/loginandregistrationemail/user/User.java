@@ -4,15 +4,11 @@ import com.dagy.loginandregistrationemail.token.Token;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Builder
 @NoArgsConstructor
@@ -21,8 +17,10 @@ import java.util.Optional;
 @Getter
 @Setter
 @Table(name = "app_user")
-public class User  implements UserDetails {
+public class User implements UserDetails {
 
+    @Column(unique = true, nullable = true)
+    public LocalDateTime createdAt;
     @Id
     @GeneratedValue
     private Long id;
@@ -30,13 +28,8 @@ public class User  implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-
     private Boolean locked = true;
     private Boolean enabled = false;
-
-    @Column(unique = true, nullable = true)
-    public LocalDateTime createdAt;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -51,7 +44,7 @@ public class User  implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return role.getAuthorities();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.dagy.loginandregistrationemail.categories;
 
 public class CategoryMapper {
-    public static CategoryResponse fromEntity(Category category){
+    public static CategoryResponse fromEntity(Category category) {
         if (category == null) return null;
         return CategoryResponse.builder()
                 .id(category.getId())
@@ -10,7 +10,7 @@ public class CategoryMapper {
                 .build();
     }
 
-    public static Category toEntity(CategoryRequest categoryRequest){
+    public static Category toEntity(CategoryRequest categoryRequest) {
         if (categoryRequest == null) return null;
         Category category = new Category();
         category.setId(categoryRequest.id());

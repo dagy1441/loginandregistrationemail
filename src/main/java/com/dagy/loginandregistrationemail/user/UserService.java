@@ -1,22 +1,16 @@
 package com.dagy.loginandregistrationemail.user;
 
-import com.dagy.loginandregistrationemail.token.Token;
 import com.dagy.loginandregistrationemail.token.TokenService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService  {
+public class UserService {
 
 //    private final PasswordEncoder passwordEncoder;
 
@@ -25,6 +19,7 @@ public class UserService  {
 
     private final UserRepository userRepository;
     private final TokenService confirmationTokenService;
+
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
@@ -33,13 +28,13 @@ public class UserService  {
     }
 
     public User findUserByEmail(String email) {
-        System.out.println("***** EMAIL ***** "+ email);
-        System.out.println("*********** USERS **************"+userRepository.findByEmail(email).get());
+        System.out.println("***** EMAIL ***** " + email);
+        System.out.println("*********** USERS **************" + userRepository.findByEmail(email).get());
 
         return userRepository.findByEmail(email)
-        .orElseThrow(() ->
-                new EntityNotFoundException(
-                        String.format(USER_NOT_FOUND_MSG, email)));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                String.format(USER_NOT_FOUND_MSG, email)));
     }
 
     public int enableAppUser(String email) {

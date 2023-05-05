@@ -18,7 +18,7 @@ public class ApiDataResponse {
     protected String reason;
     protected String message;
     protected String developerMessage;
-    protected Map<?,?> data;
-    protected Map<?,?> error;
+    protected Map<?, ?> data;
+    protected Map<?, ?> error;
 
 }

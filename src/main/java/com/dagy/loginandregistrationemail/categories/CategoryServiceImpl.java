@@ -19,15 +19,16 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ObjectsValidator<CategoryRequest> validator;
+
     @Override
     public CategoryResponse save(CategoryRequest request) {
         validator.validate(request);
         Optional<Category> category = categoryRepository.findByName(request.name());
-        if (category.isPresent()){
+        if (category.isPresent()) {
             log.warn("Categorie with name {} allready exist DB ", request.name());
             throw new EntityAllReadyExistException(
                     "La categorie avec le nom "
-                            +request.name()+
+                            + request.name() +
                             " existe dèjà en BD");
         }
         return CategoryMapper.fromEntity(
@@ -72,9 +73,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void delete(Long id) {
-        if (id == null){
+        if (id == null) {
             log.error("Article ID est null");
-            return ;
+            return;
         }
         categoryRepository.deleteById(id);
     }

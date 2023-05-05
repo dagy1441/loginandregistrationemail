@@ -17,7 +17,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 //EntityListeners ecoute les modif sur createdate et modifdate et enregistre auto dans la bd
-public class AbstractEntity  implements Serializable {
+public class AbstractEntity implements Serializable {
 
     @SequenceGenerator(
             name = "app_user_sequence",
@@ -32,7 +32,7 @@ public class AbstractEntity  implements Serializable {
     private Long id;
 
     @CreatedDate
-    @Column(name = "createdAtDate" , nullable = true, updatable = false)
+    @Column(name = "createdAtDate", nullable = true, updatable = false)
     private Instant createdAtDate;
 
     @LastModifiedDate

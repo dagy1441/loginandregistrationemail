@@ -1,7 +1,6 @@
 package com.dagy.loginandregistrationemail.categories;
 
 import lombok.Builder;
-import lombok.Getter;
 
 @Builder
 public record CategoryResponse(

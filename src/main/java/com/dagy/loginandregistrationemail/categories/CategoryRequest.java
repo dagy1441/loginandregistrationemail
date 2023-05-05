@@ -3,7 +3,6 @@ package com.dagy.loginandregistrationemail.categories;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.Getter;
 
 @Builder
 public record CategoryRequest(

@@ -19,7 +19,7 @@ import static java.time.LocalDateTime.now;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiDataResponse> handleException(IllegalStateException exception){
+    public ResponseEntity<ApiDataResponse> handleException(IllegalStateException exception) {
 
         return ResponseEntity.ok(
                 ApiDataResponse.builder()
@@ -33,16 +33,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleException(){
+    public ResponseEntity<?> handleException() {
         return ResponseEntity
                 .notFound()
                 .build();
     }
 
     @ExceptionHandler(ObjectNotValidException.class)
-    public ResponseEntity<?> handleException(ObjectNotValidException exception){
+    public ResponseEntity<?> handleException(ObjectNotValidException exception) {
 
-        return  ResponseEntity
+        return ResponseEntity
                 .badRequest()
                 .body(ApiDataResponse.builder()
                         .time(now())
@@ -59,9 +59,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityAllReadyExistException.class)
-    public ResponseEntity<?> handleException(EntityAllReadyExistException exception){
+    public ResponseEntity<?> handleException(EntityAllReadyExistException exception) {
 
-        return  ResponseEntity
+        return ResponseEntity
                 .badRequest()
                 .body(ApiDataResponse.builder()
                         .time(now())
@@ -73,9 +73,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IncorrectPasswordException.class)
-    public ResponseEntity<?> handleException(IncorrectPasswordException exception){
+    public ResponseEntity<?> handleException(IncorrectPasswordException exception) {
 
-        return  ResponseEntity
+        return ResponseEntity
                 .badRequest()
                 .body(ApiDataResponse.builder()
                         .time(now())
@@ -87,8 +87,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<?> handleException(InvalidTokenException exception){
-        return  ResponseEntity
+    public ResponseEntity<?> handleException(InvalidTokenException exception) {
+        return ResponseEntity
                 .badRequest()
                 .body(ApiDataResponse.builder()
                         .time(now())
@@ -98,7 +98,6 @@ public class GlobalExceptionHandler {
                         .build());
 
     }
-
 
 
 }

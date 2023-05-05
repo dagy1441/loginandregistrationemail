@@ -13,21 +13,21 @@ import java.util.Optional;
 
 @Repository
 public interface TokenRepository extends JpaRepository<Token, Integer> {
-        @Query(value = """
-      select t from Token t inner join User u\s
-      on t.user.id = u.id\s
-      where u.id = :id and (t.expired = false or t.revoked = false)\s
-      """)
-        List<Token> findAllValidTokenByUser(Long id);
+    @Query(value = """
+            select t from Token t inner join User u\s
+            on t.user.id = u.id\s
+            where u.id = :id and (t.expired = false or t.revoked = false)\s
+            """)
+    List<Token> findAllValidTokenByUser(Long id);
 
-        Optional<Token> findByToken(String token);
+    Optional<Token> findByToken(String token);
 
-        @Transactional
-        @Modifying
-        @Query("UPDATE Token t " +
-                "SET t.confirmedAt = ?2 " +
-                "WHERE t.token = ?1")
-        int updateConfirmedAt(String token, LocalDateTime confirmedAt);
+    @Transactional
+    @Modifying
+    @Query("UPDATE Token t " +
+            "SET t.confirmedAt = ?2 " +
+            "WHERE t.token = ?1")
+    int updateConfirmedAt(String token, LocalDateTime confirmedAt);
 
-        void deleteByUser(User user);
+    void deleteByUser(User user);
 }

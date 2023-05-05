@@ -33,7 +33,7 @@ public class TokenService {
                 token, LocalDateTime.now());
     }
 
-    public List<Token> findAllValidTokenByUser(Long id){
+    public List<Token> findAllValidTokenByUser(Long id) {
         return tokenRepository.findAllValidTokenByUser(id);
     }
 
