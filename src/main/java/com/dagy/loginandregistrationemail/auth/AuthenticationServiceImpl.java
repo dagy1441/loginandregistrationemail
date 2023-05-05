@@ -4,6 +4,7 @@ import com.dagy.loginandregistrationemail.email.EmailSender;
 import com.dagy.loginandregistrationemail.email.NotificationEmail;
 import com.dagy.loginandregistrationemail.exceptions.EntityAllReadyExistException;
 import com.dagy.loginandregistrationemail.exceptions.IncorrectPasswordException;
+import com.dagy.loginandregistrationemail.exceptions.InvalidTokenException;
 import com.dagy.loginandregistrationemail.security.jwt.JwtService;
 import com.dagy.loginandregistrationemail.token.Token;
 import com.dagy.loginandregistrationemail.token.TokenService;
@@ -53,6 +54,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final ObjectsValidator<RegisterRequest> registerValidator;
   private final ObjectsValidator<AuthenticationRequest> authenticationValidator;
   private final ObjectsValidator<ChangePasswordRequest> changePasswordRequestValidator;
+  private final ObjectsValidator<ForgotPasswordRequest> forgotPasswordRequestValidator;
   private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
 
   public AuthenticationResponse register(RegisterRequest request) {
@@ -85,12 +87,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     saveUserToken(savedUser, jwtToken);
 
     String link = "http://localhost:8080/api/v1/auth/registration/confirm?token=" + jwtToken;
-    emailSender.sendMail(new NotificationEmail(
-                    "Please Activate your Account",
-                    request.getEmail(),
-                    buildEmail(request.getFirstname(), link)
-            ));
+    String emailContent = "Thank you for registering. Please click on the below link to activate your account:";
+    String header = "Confirm your email";
 
+    emailSender.sendMail(new NotificationEmail(
+            "Please Activate your Account",
+            user.getEmail(),
+            buildEmail(user.getFirstName(),header, emailContent, link)
+    ));
 
     return AuthenticationResponse.builder()
             .accessToken(jwtToken)
@@ -99,9 +103,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
     log.info("Validate authentication request");
     authenticationValidator.validate(request);
-    System.out.println("**** ICI Service *****");
     Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     request.getEmail(),
@@ -119,7 +123,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
-    getCurrentUser();
+    log.info("Activation email sent!!");
     return AuthenticationResponse.builder()
             .accessToken(jwtToken)
               .refreshToken(refreshToken)
@@ -220,11 +224,70 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public void forgotPassword(ForgotPasswordRequest request) {
+    forgotPasswordRequestValidator.validate(request);
+
+//    Optional<User> verifiedUser = userRepository.findByEmail(request.getEmail());
+//
+//    if (verifiedUser.isEmpty()){
+//      log.warn("The user with email {}  already exist in BD", request.getEmail());
+//      throw new UsernameNotFoundException(
+//              "L'email "
+//                      +request.getEmail()+
+//                      " est incorrecte ou n'existe pas");
+//    }
+//
+//    if (!request.getPassword().equals(request.getConfirmPassword()) ) {
+//      throw new IncorrectPasswordException("Les mots de passes ne correspondent pas");
+//    }
+//
+//    verifiedUser.get().setPassword(passwordEncoder.encode(request.getPassword()));
+//    userRepository.save(verifiedUser.get());
+
     // TODO récuper l'email du user à patir de la requette
     // TODO verifier si le user existe dans la base de données
     // TODO Envoyer un mail qui contient l'address pour changer son mot de pass
     //TODO Changer son mot de passe
     // TODO Enregister son nouveau mot de passe
+  }
+
+  @Override
+  public void createPasswordResetToken(User user) {
+    String token = jwtService.generateToken(user);
+    saveUserToken(user, token);
+    String resetPasswordLink = "http://localhost:8080/api/v1/auth/reset-password?token=" + token;
+    String emailContent = "Please click the following link to reset your password: ";
+    String header = "Reset your password";
+
+    emailSender.sendMail(new NotificationEmail(
+            "Reset password ",
+            user.getEmail(),
+            buildEmail(user.getFirstName(),header, emailContent, resetPasswordLink)
+    ));
+
+}
+
+  @Override
+  public ResetPasswordResponse validatePasswordResetToken(String token) {
+//    try {
+//
+//    } catch (Exception e){
+//
+//    }catch (){
+//
+//    }
+    Token passwordResetToken = tokenService.getByToken(token).get();
+    if (passwordResetToken.isExpired()) {
+      throw new InvalidTokenException("Invalid or expired token");
+    }
+    return AuthMapper.fromEntity(
+            passwordResetToken.getUser()
+    );
+  }
+
+  public void resetPassword(User user, String newPassword) {
+    user.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+    tokenService.deleteByUser(user);
   }
 
   @Transactional()
@@ -234,8 +297,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     User authentication = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    log.info("Service------------------------- "+authentication.getUsername());
-    System.out.println("Service------------------------- "+authentication.getUsername());
     String currentUserName = authentication.getUsername();
 
     User userExist = (User) userService.loadUserByUsername(currentUserName);
@@ -246,7 +307,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
 
-  private String buildEmail(String name, String link) {
+  private String buildEmail(String name,String header,String content, String link) {
     return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
             "\n" +
             "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
@@ -264,7 +325,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             "                  \n" +
             "                    </td>\n" +
             "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-            "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email</span>\n" +
+            "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">"+header+"</span>\n" +
             "                    </td>\n" +
             "                  </tr>\n" +
             "                </tbody></table>\n" +
@@ -302,7 +363,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
             "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
             "        \n" +
-            "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
+            "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">"+ content +"</p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
             "        \n" +
             "      </td>\n" +
             "      <td width=\"10\" valign=\"middle\"><br></td>\n" +

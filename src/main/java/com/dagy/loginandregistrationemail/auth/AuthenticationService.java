@@ -21,5 +21,11 @@ public interface AuthenticationService {
 
   public void forgotPassword(ForgotPasswordRequest request);
 
+  public void createPasswordResetToken(User user);
+
+  public ResetPasswordResponse validatePasswordResetToken(String token);
+
+  public void resetPassword(User user, String newPassword);
+
 
 }

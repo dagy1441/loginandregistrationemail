@@ -1,5 +1,6 @@
 package com.dagy.loginandregistrationemail.token;
 
+import com.dagy.loginandregistrationemail.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,5 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
                 "WHERE t.token = ?1")
         int updateConfirmedAt(String token, LocalDateTime confirmedAt);
 
+        void deleteByUser(User user);
 }

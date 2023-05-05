@@ -25,7 +25,6 @@ public class RegisterRequest {
   @Email(message = "Email invalide", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
   private String email;
 
-
   /**
    * Min 1 uppercase letter.
    * Min 1 lowercase letter.

@@ -1,6 +1,8 @@
 package com.dagy.loginandregistrationemail.token;
 
 
+import com.dagy.loginandregistrationemail.exceptions.InvalidTokenException;
+import com.dagy.loginandregistrationemail.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,11 @@ public class TokenService {
     }
 
     public Optional<Token> getByToken(String token) {
-        return tokenRepository.findByToken(token);
+        Token expectedToken = tokenRepository.findByToken(token).get();
+        if (expectedToken.isExpired()) {
+            throw new InvalidTokenException("Invalid or expired token");
+        }
+        return Optional.of(expectedToken);
     }
 
     public int setConfirmedAt(String token) {
@@ -33,6 +39,10 @@ public class TokenService {
 
     public List<Token> saveAll(List<Token> tokens) {
         return tokenRepository.saveAll(tokens);
+    }
+
+    public void deleteByUser(User user) {
+        tokenRepository.deleteByUser(user);
     }
 
 }

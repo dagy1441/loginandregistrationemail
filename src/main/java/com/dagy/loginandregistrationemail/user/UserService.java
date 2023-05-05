@@ -2,6 +2,7 @@ package com.dagy.loginandregistrationemail.user;
 
 import com.dagy.loginandregistrationemail.token.Token;
 import com.dagy.loginandregistrationemail.token.TokenService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,48 +32,19 @@ public class UserService  {
                                 String.format(USER_NOT_FOUND_MSG, email)));
     }
 
-    public User getUserByUsername(String email) {
+    public User findUserByEmail(String email) {
+        System.out.println("***** EMAIL ***** "+ email);
+        System.out.println("*********** USERS **************"+userRepository.findByEmail(email).get());
+
         return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                String.format(USER_NOT_FOUND_MSG, email)));
+        .orElseThrow(() ->
+                new EntityNotFoundException(
+                        String.format(USER_NOT_FOUND_MSG, email)));
     }
 
     public int enableAppUser(String email) {
         return userRepository.enableAppUser(email);
     }
 
-    public String signUpUser(User user) {
-        boolean userExists = userRepository
-                .findByEmail(user.getEmail())
-                .isPresent();
-
-        if (userExists) {
-            // TODO check of attributes are the same and
-            // TODO if email not confirmed send confirmation email.
-
-            throw new IllegalStateException("email already taken");
-        }
-
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        userRepository.save(user);
-
-        String token = UUID.randomUUID().toString();
-
-        Token confirmationToken = new Token(
-//                token,
-//                LocalDateTime.now(),
-//                LocalDateTime.now().plusMinutes(15),
-//                user
-        );
-
-        confirmationTokenService.saveToken(
-                confirmationToken);
-
-//        TODO: SEND EMAIL
-
-        return token;
-    }
 
 }

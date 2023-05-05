@@ -2,6 +2,7 @@ package com.dagy.loginandregistrationemail.handlers;
 
 import com.dagy.loginandregistrationemail.exceptions.EntityAllReadyExistException;
 import com.dagy.loginandregistrationemail.exceptions.IncorrectPasswordException;
+import com.dagy.loginandregistrationemail.exceptions.InvalidTokenException;
 import com.dagy.loginandregistrationemail.exceptions.ObjectNotValidException;
 import com.dagy.loginandregistrationemail.utilities.helpers.ApiDataResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -74,6 +75,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IncorrectPasswordException.class)
     public ResponseEntity<?> handleException(IncorrectPasswordException exception){
 
+        return  ResponseEntity
+                .badRequest()
+                .body(ApiDataResponse.builder()
+                        .time(now())
+                        .message(exception.getMessage())
+                        .httpStatus(HttpStatus.BAD_REQUEST)
+                        .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .build());
+
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<?> handleException(InvalidTokenException exception){
         return  ResponseEntity
                 .badRequest()
                 .body(ApiDataResponse.builder()

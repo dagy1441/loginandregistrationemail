@@ -52,4 +52,8 @@ public class Token  {
     @JoinColumn(name = "user_id", nullable = false)
     public User user;
 
+    public Token(String token, User user) {
+        this.token = token;
+        this.user = user;
+    }
 }

@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ForgotPasswordRequest {
 
-  @NotNull(message = "L'email est obligatoire")
-  @NotEmpty(message = "L'email est obligatoire")
-  @Email(message = "Email invalide", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-  private String email;
+//  @NotNull(message = "L'email est obligatoire")
+//  @NotEmpty(message = "L'email est obligatoire")
+//  @Email(message = "Email invalide", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+//  private String email;
 
   
   @NotNull(message = "Le password est obligatoire")
